@@ -1,68 +1,36 @@
 <?php
-    // DBへの接続
+    // DB接続
     $dsn = 'mysql:dbname=myfriends;host=localhost';
     $user = 'root';
     $password = '';
     $dbh = new PDO($dsn, $user, $password);
     $dbh->query('SET NAMES utf8');
-    // areasテーブルからパラメータのarea_idを使用してデータ1レコードを取得
-    // $_GET = array('area_id'=>20);
-    $area_id = $_GET['area_id'];
 
-    $sql = 'SELECT `area_name` FROM `areas` WHERE `area_id` = ' . $area_id;
-
+    // areasテーブルのデータ全件取得
+    $sql = 'SELECT * FROM `areas` WHERE 1';
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 
-    // 1レコード分しか取得しないのでfetchも1回で良い
-    $area = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // 友達データの取得をする
-    // friendsテーブルからデータを取得する
-    $sql = 'SELECT * FROM `friends` WHERE `area_id` = ' . $area_id;
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute();
-    // Object型のデータをArray型に変換する
-    $friends = array();
-
-    // 男女カウント用の変数
-    $male = 0;
-    $female = 0;
+    $areas = array();
 
     while (1) {
-        // fetchする
         $record = $stmt->fetch(PDO::FETCH_ASSOC);
-        // 空だったらbreak
-        if ($record == false) {
-          break;
-        }
-        // $friends配列に値を代入する
-        $friends[] = $record;
 
-        // 男女のカウントプログラム
-        if ($record['gender'] == 0) { // その友達が男だったら
-            $male++; // 自己代入文
-            // $male = $male + 1;
-        } elseif ($record['gender'] == 1) { // その友達が女だったら
-            $female++;
+        if ($record == false) {
+            break;
         }
+
+        $areas[] = $record;
     }
 
-    // echo '<pre>';
-    // var_dump($friends);
-    // echo '</pre>';
-
-    // HTMLと連携して表示する
-
-    echo '<br>';
-    echo '<br>';
-    // var_dump($area);
-    // echo $male;
-    // echo '<br>';
-    // echo $female;
-
+    // DBに友達データを登録する処理
+    // もし$_POSTが空じゃなければ
+    // 登録ボタンが押されたら処理を実行
+    if (!empty($_POST)) {
+        // ①$_POSTに格納された送信データをechoを使って全件出力
+        // ②登録処理実装
+    }
  ?>
-
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -85,7 +53,6 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
   </head>
   <body>
   <nav class="navbar navbar-default navbar-fixed-top">
@@ -113,36 +80,49 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
-      <legend><?php echo $area['area_name']; ?>の友達</legend>
-      <div class="well">男性：<?php echo $male; ?>名　女性：<?php echo $female; ?>名</div>
-        <table class="table table-striped table-hover table-condensed">
-          <thead>
-            <tr>
-              <th><div class="text-center">名前</div></th>
-              <th><div class="text-center"></div></th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- 友達の名前を表示 -->
-            <?php foreach ($friends as $friend) : ?>
-            <tr>
-              <td><div class="text-center"><?php echo $friend['friend_name'] ?></div></td>
-              <td>
-                <div class="text-center">
-                  <a href="edit.php"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
-                </div>
-              </td>
-            </tr>
-            <?php endforeach; ?>
+        <legend>友達の登録</legend>
+        <form method="post" action="" class="form-horizontal" role="form">
+            <!-- 名前 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">名前</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" class="form-control" placeholder="例：山田　太郎">
+              </div>
+            </div>
+            <!-- 出身 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">出身</label>
+              <div class="col-sm-10">
+                <select class="form-control" name="area_id">
+                  <option value="0">出身地を選択</option>
+                  <?php foreach ($areas as $area) : ?>
+                  <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
+            <!-- 性別 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">性別</label>
+              <div class="col-sm-10">
+                <select class="form-control" name="gender">
+                  <option value="0">性別を選択</option>
+                  <option value="1">男性</option>
+                  <option value="2">女性</option>
+                </select>
+              </div>
+            </div>
+            <!-- 年齢 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">年齢</label>
+              <div class="col-sm-10">
+                <input type="text" name="age" class="form-control" placeholder="例：27">
+              </div>
+            </div>
 
-          </tbody>
-        </table>
-
-        <input type="button" class="btn btn-default" value="新規作成" onClick="location.href='new.php'">
+          <input type="submit" class="btn btn-default" value="登録">
+        </form>
       </div>
-    </div>
-  </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

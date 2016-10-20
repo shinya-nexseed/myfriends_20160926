@@ -8,11 +8,11 @@
     <title>myFriends</title>
 
     <!-- Bootstrap -->
-    <link href="../assets/css/bootstrap.css" rel="stylesheet">
-    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="../assets/css/form.css" rel="stylesheet">
-    <link href="../assets/css/timeline.css" rel="stylesheet">
-    <link href="../assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="assets/css/form.css" rel="stylesheet">
+    <link href="assets/css/timeline.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -47,13 +47,13 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
-        <legend>友達の登録</legend>
+        <legend>友達の編集</legend>
         <form method="post" action="" class="form-horizontal" role="form">
             <!-- 名前 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">名前</label>
               <div class="col-sm-10">
-                <input type="text" name="name" class="form-control" placeholder="例：山田　太郎">
+                <input type="text" name="name" class="form-control" placeholder="山田　太郎" value="山田　太郎">
               </div>
             </div>
             <!-- 出身 -->
@@ -62,7 +62,7 @@
               <div class="col-sm-10">
                 <select class="form-control" name="area_id">
                   <option value="0">出身地を選択</option>
-                  <option value="1">北海道</option>
+                  <option value="1" selected>北海道</option>
                   <option value="2">青森</option>
                   <option value="3">岩手</option>
                   <option value="4">宮城</option>
@@ -76,7 +76,7 @@
               <div class="col-sm-10">
                 <select class="form-control" name="gender">
                   <option value="0">性別を選択</option>
-                  <option value="1">男性</option>
+                  <option value="1" selected>男性</option>
                   <option value="2">女性</option>
                 </select>
               </div>
@@ -85,11 +85,11 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">年齢</label>
               <div class="col-sm-10">
-                <input type="text" name="age" class="form-control" placeholder="例：27">
+                <input type="text" name="age" class="form-control" placeholder="例：27" value="27">
               </div>
             </div>
 
-          <input type="submit" class="btn btn-default" value="登録">
+          <input type="submit" class="btn btn-default" value="更新">
         </form>
       </div>
 
