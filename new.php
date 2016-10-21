@@ -27,8 +27,49 @@
     // もし$_POSTが空じゃなければ
     // 登録ボタンが押されたら処理を実行
     if (!empty($_POST)) {
+        // $_POSTとは
+        // PHPに予め用意されたスーパーグローバル変数
+        // Formからmethod="post"でデータが送信された際、内部で$_POSTが生成される
+        // $_POSTはFormの要素に指定されたキー (name) と実際に入力された値 (value) で
+        // 構成された連想配列です。
+        // $_POST = array("name"=>"友達１１", "area_id"=>10, "gender"=>1, "age"=>27);
+
         // ①$_POSTに格納された送信データをechoを使って全件出力
+        echo '<br>';
+        echo '<br>';
+        echo '<pre>';
+        var_dump($_POST);
+        echo '</pre>';
+
+        echo $_POST["name"];
+        echo '<br>';
+        echo $_POST["area_id"];
+        echo '<br>';
+        echo $_POST["gender"];
+        echo '<br>';
+        echo $_POST["age"];
+        echo '<br>';
         // ②登録処理実装
+        // INSERT INTO `テーブル名` SET `カラム名1`=値1, `カラム名2`=値2, `カラム名3`=値3
+        $sql = 'INSERT INTO `friends` SET `friend_name`=?,
+                                          `area_id`=?,
+                                          `gender`=?,
+                                          `age`=?,
+                                          `created`=NOW()';
+
+        // ?に代入したいデータを定義する
+        $data[] = $_POST["name"];
+        $data[] = $_POST["area_id"];
+        $data[] = $_POST["gender"];
+        $data[] = $_POST["age"];
+
+        // データをセットして実行
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($data);
+
+        header('Location: index.php');
+        // TODO : 登録された都道府県のshow.phpに遷移してほしい
+        exit(); // PHPの言語基盤
     }
  ?>
 <!DOCTYPE html>

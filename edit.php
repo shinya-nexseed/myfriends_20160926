@@ -1,3 +1,30 @@
+<?php
+    // DB接続
+    $dsn = 'mysql:dbname=myfriends;host=localhost';
+    $user = 'root';
+    $password = '';
+    $dbh = new PDO($dsn, $user, $password);
+    $dbh->query('SET NAMES utf8');
+
+    // 編集対象となる友達データ一件を取得
+    $friend_id = $_GET['friend_id'];
+    $sql = 'SELECT * FROM `friends` WHERE `friend_id`=' . $friend_id;
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+
+    // フォームの値 (value) に取得したデータを表示
+    $friends = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    echo '<br>';
+    echo '<br>';
+    echo '<pre>';
+    var_dump($friends);
+    echo '</pre>';
+    echo $friends["friend_name"];
+
+    // $_POSTが存在すれば更新処理 (UPDATE)
+ ?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -53,7 +80,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">名前</label>
               <div class="col-sm-10">
-                <input type="text" name="name" class="form-control" placeholder="山田　太郎" value="山田　太郎">
+                <input type="text" name="name" class="form-control" placeholder="例 : 山田　太郎" value="<?php echo $friends['friend_name']; ?>">
               </div>
             </div>
             <!-- 出身 -->
@@ -76,8 +103,18 @@
               <div class="col-sm-10">
                 <select class="form-control" name="gender">
                   <option value="0">性別を選択</option>
-                  <option value="1" selected>男性</option>
-                  <option value="2">女性</option>
+                  <!--
+                    if文を使って
+                    もしDBから取得した友達データのgenderの値が0だった場合は男性にselectedを、
+                    1だった場合は女性にselectedをつける
+                   -->
+                  <?php if($friends['gender'] == 0) : ?>
+                    <option value="0" selected>男性</option>
+                    <option value="1">女性</option>
+                  <?php else: ?>
+                    <option value="0">男性</option>
+                    <option value="1" selected>女性</option>
+                  <?php endif; ?>
                 </select>
               </div>
             </div>
@@ -85,7 +122,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">年齢</label>
               <div class="col-sm-10">
-                <input type="text" name="age" class="form-control" placeholder="例：27" value="27">
+                <input type="text" name="age" class="form-control" placeholder="例：27" value="<?php echo $friends['age']; ?>">
               </div>
             </div>
 
