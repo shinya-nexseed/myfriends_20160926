@@ -23,7 +23,41 @@
     echo '</pre>';
     echo $friends["friend_name"];
 
+    // areasテーブルのデータ全件取得
+    $sql = 'SELECT * FROM `areas` WHERE 1';
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+
+    $areas = array();
+
+    while (1) {
+        $record = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($record == false) {
+            break;
+        }
+
+        $areas[] = $record;
+    }
+
     // $_POSTが存在すれば更新処理 (UPDATE)
+    if (!empty($_POST)) {
+        // UPDATE文を作成して実行
+        $sql = 'UPDATE `friends` SET `friend_name`=?, `area_id`=?, `gender`=?, `age`=?
+                                 WHERE `friend_id`=?';
+        $edit_data[] = $_POST['name'];
+        $edit_data[] = $_POST['area_id'];
+        $edit_data[] = $_POST['gender'];
+        $edit_data[] = $_POST['age'];
+        $edit_data[] = $friend_id;
+
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($edit_data);
+
+        // header()でindexに遷移
+        header('Location: index.php');
+        exit();
+    }
  ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -75,7 +109,7 @@
     <div class="row">
       <div class="col-md-4 content-margin-top">
         <legend>友達の編集</legend>
-        <form method="post" action="" class="form-horizontal" role="form">
+        <form method="post" action="edit.php?friend_id=<?php echo $friend_id; ?>" class="form-horizontal" role="form">
             <!-- 名前 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">名前</label>
@@ -89,11 +123,17 @@
               <div class="col-sm-10">
                 <select class="form-control" name="area_id">
                   <option value="0">出身地を選択</option>
-                  <option value="1" selected>北海道</option>
-                  <option value="2">青森</option>
-                  <option value="3">岩手</option>
-                  <option value="4">宮城</option>
-                  <option value="5">秋田</option>
+                  <!--
+                    ①new.phpを参考に47都道府県データを繰り返し表示
+                    ②$friendsのarea_idと、繰り返し生成される$areaのarea_idが一致したらselectedをoptionタグに付ける
+                   -->
+                  <?php foreach ($areas as $area) : ?>
+                    <?php if($area['area_id'] == $friends['area_id']): ?>
+                      <option value="<?php echo $area['area_id']; ?>" selected><?php echo $area['area_name']; ?></option>
+                    <?php else: ?>
+                      <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
+                    <?php endif; ?>
+                  <?php endforeach; ?>
                 </select>
               </div>
             </div>

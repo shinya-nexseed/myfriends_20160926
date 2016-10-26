@@ -6,7 +6,7 @@
     $dbh = new PDO($dsn, $user, $password);
     $dbh->query('SET NAMES utf8');
     // ② DBからareasテーブルの情報を取得
-    $sql = 'SELECT * FROM `areas` WHERE 1';
+    $sql = 'SELECT `areas`.`area_id`, `areas`.`area_name`, COUNT(`friends`.`friend_id`) AS friends_cnt FROM `areas` LEFT JOIN `friends` ON `areas`.`area_id` = `friends`.`area_id` GROUP BY `areas`.`area_id`, `areas`.`area_name`  ORDER BY `areas`.`area_id`';
     // DB名、テーブル名、カラム名はアクサングラーブで囲う
       // SQL文の中では省略可
 
@@ -34,6 +34,16 @@
     echo '<br>';
     echo '<br>';
     echo count($areas);
+
+    // $sql = 'SELECT COUNT(`friend_id`) AS friends_cnt FROM `friends` WHERE `area_id` = 1';
+    // $stmt = $dbh->prepare($sql);
+    // $stmt->execute();
+    // $record = $stmt->fetch(PDO::FETCH_ASSOC);
+    // echo '<br>';
+    // echo '<pre>';
+    // var_dump($record);
+    // echo '</pre>';
+    // echo $record["friends_cnt"];
 
     $dbh = null;
 
@@ -110,7 +120,7 @@
                   </a>
                 </div>
               </td>
-              <td><div class="text-center">3</div></td>
+              <td><div class="text-center"><?php echo $area['friends_cnt']; ?></div></td>
             </tr>
             <?php endforeach; ?>
           </tbody>
