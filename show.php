@@ -2,9 +2,24 @@
     // DBへの接続
     $dsn = 'mysql:dbname=myfriends;host=localhost';
     $user = 'root';
-    $password = '';
+    $password = 'mysql';
     $dbh = new PDO($dsn, $user, $password);
     $dbh->query('SET NAMES utf8');
+
+    // 削除処理
+    if (!empty($_GET['action']) && $_GET['action'] == 'delete') {
+        // action=delete&friend_id=4
+        // $_GET = array('kawasaki' => 'kento', 'friend_id' => '4');
+
+        $sql = 'DELETE FROM `friends` WHERE `friend_id` = ' . $_GET['friend_id'];
+
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute();
+
+        header('Location: index.php');
+        exit();
+    }
+
     // areasテーブルからパラメータのarea_idを使用してデータ1レコードを取得
     // $_GET = array('area_id'=>20);
     $area_id = $_GET['area_id'];
@@ -130,7 +145,7 @@
               <td>
                 <div class="text-center">
                   <a href="edit.php?friend_id=<?php echo $friend['friend_id']; ?>"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
+<a href="javascript:void(0);" onclick="destroy(<?php echo $friend['friend_id']; ?>);"><i class="fa fa-trash"></i></a>
                 </div>
               </td>
             </tr>
@@ -147,5 +162,39 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+      // JavaScriptコード
+      // JavaScriptとは、ブラウザ上で実行されるスクリプト言語
+      function destroy(friend_id) { // 自作関数 (組込み関数)
+        // alert('ほげ'); // ポップアップでメッセージを表示する
+
+        var del = confirm('削除しますか？'); // OKを押すとtrueを返し、cancelを押すとfalseを返す
+
+        if (del == true) {
+          // OKの処理
+
+          // PHPでいうheader('Location: show.php?.........');
+          location.href = 'show.php?action=delete&friend_id=' + friend_id;
+          return true;
+
+        } else {
+          // cancelの処理
+          return false;
+        }
+
+      }
+    </script>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
